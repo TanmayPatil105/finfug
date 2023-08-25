@@ -1,5 +1,7 @@
 import React from 'react';
-import { Container, List, ListItem, ListItemText, TextField} from '@mui/material';
+import { Container, List, ListItem, ListItemText, TextField, Grid} from '@mui/material';
+import Fab from '@material-ui/core/Fab';
+import SendIcon from '@material-ui/icons/Send';
 import classnames from 'classnames';
 import './Room.css';
 
@@ -35,7 +37,14 @@ export default function Room(props) {
                     </ListItem>
                 ))}
               </List>
-              <TextField fullWidth variant="outlined" margin="normal" placeholder='Message' className='enter-message'/>
+              <Grid container style={{padding: '20px'}}>
+                    <Grid item xs={11} align="left">
+                    <TextField placeholder="Message" fullWidth />
+                    </Grid>
+                    <Grid xs={1} align="center" className="input">
+                        <Fab size="small" color="secondary" aria-label="add"><SendIcon /></Fab>
+                    </Grid>
+                </Grid>
             </div>
         </Container>
     );
