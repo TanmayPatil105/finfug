@@ -1,13 +1,17 @@
 import React, { useState } from 'react'
 import { Container , Typography, TextField, Grid, Button} from '@mui/material';
 import { uniqueNamesGenerator, adjectives, animals } from 'unique-names-generator';
-import { createRoom } from '../api/Api';
-import EnterRoom from '../components/EnterRoom';
+import Room from '../components/Room';
+import { createRoom, getRoom, joinRoom } from '../api/Api';
 
 export default function MainApp() {
 
     const [displayName, setDisplayName] = useState('');
     const [JoinRoom, setJoinRoom] = useState(false);
+    const [InRoom, setInRoom] = useState(false);
+    const [userId, setUserId] = useState('');
+    const [roomId, setRoomId] = useState('');
+    const [room, setRoom] = useState('');
 
     function GenerateName(){
         const shortName = uniqueNamesGenerator({
@@ -18,12 +22,19 @@ export default function MainApp() {
         return shortName;
     }
 
-    function HandleJoinRoom(){
+    function HandleJoinRoomClick(){
         var name = displayName; 
         if (name === ''){
             name = GenerateName()
         }
         setJoinRoom(true);
+    }
+
+    async function HandleGetRoom(roomid){
+        const data = await getRoom(roomid);
+        console.log(data);
+        setRoom(data);
+        setInRoom(true);
     }
 
     async function HandleCreateAndJoinRoom(){
@@ -32,19 +43,33 @@ export default function MainApp() {
             name = GenerateName()
         }
         const data = await createRoom(name);
-        console.log(data);
+        console.log(data.SessionId)
+        setUserId(data.UserId);
+        setRoomId(data.SessionId);
+        HandleGetRoom(data.SessionId);
+    }
+
+    async function HandleJoinRoom(){
+        var name = displayName; 
+        if (name === ''){
+            name = GenerateName()
+        }
+        const data = await joinRoom(displayName, room);
+        setUserId(data.UserId);
+        setRoomId(data.SessionId);
+        HandleGetRoom(data.SessionId);
     }
 
     return (
         <>
-            { !JoinRoom && <div>
+            { !InRoom && !JoinRoom && <div>
                 <Container maxWidth="sm">
                     <div style={{ textAlign: 'center', margin: '50px auto' }}>
                         <Typography variant="h4">FinFugal</Typography>
                         <TextField label="Display Name" fullWidth variant="outlined" margin="normal" onChange={(event) => { setDisplayName(event.target.value);}}/>
                         <Grid container spacing={2} justifyContent="center">
                             <Grid item>
-                                <Button variant="contained" color="primary" onClick={HandleJoinRoom}>Join Room</Button>
+                                <Button variant="contained" color="primary" onClick={HandleJoinRoomClick}>Join Room</Button>
                             </Grid>
                             <Grid item>
                                 <Button variant="contained" color="primary" onClick={HandleCreateAndJoinRoom}>Create Room</Button>
@@ -53,7 +78,20 @@ export default function MainApp() {
                     </div>
                 </Container>
             </div> }
-            { JoinRoom && <EnterRoom name={displayName}/>}
+            { !InRoom && JoinRoom && <div>
+                <Container maxWidth="sm">
+                        <div style={{ textAlign: 'center', margin: '50px auto' }}>
+                            <TextField value={displayName} placeholder='Display Name' fullWidth variant="outlined" margin="normal" onChange={(event) => { setDisplayName(event.target.value);}}/>
+                            <TextField placeholder='Room' fullWidth variant="outlined" margin="normal" onChange={(event) => { setRoom(event.target.value);}}/>
+                            <Grid container spacing={2} justifyContent="center">
+                                <Grid item>
+                                    <Button variant="contained" color="primary" onClick={HandleJoinRoom}>Join Room</Button>
+                                </Grid>
+                            </Grid>
+                        </div>
+                    </Container>
+            </div> }
+            { InRoom && <Room room={room} userId={userId}/>}
         </>
     )
 }

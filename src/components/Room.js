@@ -9,7 +9,7 @@ export default function Room(props) {
 
     const room = props.room;
 
-    let userId = 'cjfhin0vbiv3iu26hqjg';
+    let userId = props.userId;
 
     return (
         <Container maxWidth="sm" className="chat-window">
