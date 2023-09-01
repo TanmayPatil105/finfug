@@ -45,14 +45,12 @@ export async function getRoom(room){
   }
 }
 
-export async function sendMessage(userId, room, text){
+export async function sendMessage(userId, roomId, text){
   try {
     await axios.post(`${API_BASE_URL}/send-message`,{
-      params: {
-        userId: userId,
-        room: room,
-        text: text,
-      }
+      userId: userId,
+      room: roomId,
+      text: text,
     });
   } catch (error){
       console.error('Error fetching data:', error);
