@@ -22,6 +22,11 @@ export default function Room(props) {
         // setInRoom(true);
     }
 
+    function getTime(datetime){
+        const dateTime = new Date(datetime);
+        return dateTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+    }
+
     return (
         <Container maxWidth="sm" className="chat-window">
             <div
@@ -44,6 +49,9 @@ export default function Room(props) {
                             secondary={Message.UserId !== UserId ? room.Participants.find(
                                 Participant => Participant.UserId === Message.UserId
                             ).Name : 'You'}
+                        />
+                        <ListItemText
+                            secondary={getTime(Message.TimeStamp)}
                         />
                     </ListItem>
                 ))}
