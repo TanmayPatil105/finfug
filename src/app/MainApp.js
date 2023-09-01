@@ -32,7 +32,6 @@ export default function MainApp() {
 
     async function HandleGetRoom(roomid){
         const data = await getRoom(roomid);
-        console.log(data);
         setRoom(data);
         setInRoom(true);
     }
@@ -43,7 +42,6 @@ export default function MainApp() {
             name = GenerateName()
         }
         const data = await createRoom(name);
-        console.log(data.SessionId)
         setUserId(data.UserId);
         setRoomId(data.SessionId);
         HandleGetRoom(data.SessionId);
@@ -54,7 +52,7 @@ export default function MainApp() {
         if (name === ''){
             name = GenerateName()
         }
-        const data = await joinRoom(displayName, room);
+        const data = await joinRoom(displayName, roomId);
         setUserId(data.UserId);
         setRoomId(data.SessionId);
         HandleGetRoom(data.SessionId);
@@ -82,7 +80,7 @@ export default function MainApp() {
                 <Container maxWidth="sm">
                         <div style={{ textAlign: 'center', margin: '50px auto' }}>
                             <TextField value={displayName} placeholder='Display Name' fullWidth variant="outlined" margin="normal" onChange={(event) => { setDisplayName(event.target.value);}}/>
-                            <TextField placeholder='Room' fullWidth variant="outlined" margin="normal" onChange={(event) => { setRoom(event.target.value);}}/>
+                            <TextField placeholder='Room' fullWidth variant="outlined" margin="normal" onChange={(event) => { setRoomId(event.target.value);}}/>
                             <Grid container spacing={2} justifyContent="center">
                                 <Grid item>
                                     <Button variant="contained" color="primary" onClick={HandleJoinRoom}>Join Room</Button>
@@ -91,7 +89,7 @@ export default function MainApp() {
                         </div>
                     </Container>
             </div> }
-            { InRoom && <Room room={room} userId={userId}/>}
+            { InRoom && <Room room={JSON.stringify(room)} userId={userId}/>}
         </>
     )
 }
