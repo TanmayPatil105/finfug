@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Container , Typography, TextField, Grid, Button} from '@mui/material';
 import { uniqueNamesGenerator, adjectives, animals } from 'unique-names-generator';
 import Room from '../components/Room';
-import { createRoom, getRoom, joinRoom } from '../api/Api';
+import { createRoom, joinRoom } from '../api/Api';
 
 export default function MainApp() {
 
@@ -11,7 +11,6 @@ export default function MainApp() {
     const [InRoom, setInRoom] = useState(false);
     const [userId, setUserId] = useState('');
     const [roomId, setRoomId] = useState('');
-    const [room, setRoom] = useState('');
 
     function GenerateName(){
         const shortName = uniqueNamesGenerator({
@@ -30,12 +29,6 @@ export default function MainApp() {
         setJoinRoom(true);
     }
 
-    async function HandleGetRoom(roomid){
-        const data = await getRoom(roomid);
-        setRoom(data);
-        setInRoom(true);
-    }
-
     async function HandleCreateAndJoinRoom(){
         var name = displayName; 
         if (name === ''){
@@ -44,7 +37,7 @@ export default function MainApp() {
         const data = await createRoom(name);
         setUserId(data.UserId);
         setRoomId(data.SessionId);
-        HandleGetRoom(data.SessionId);
+        setInRoom(true);
     }
 
     async function HandleJoinRoom(){
@@ -55,7 +48,7 @@ export default function MainApp() {
         const data = await joinRoom(displayName, roomId);
         setUserId(data.UserId);
         setRoomId(data.SessionId);
-        HandleGetRoom(data.SessionId);
+        setInRoom(true);
     }
 
     return (
@@ -89,7 +82,7 @@ export default function MainApp() {
                         </div>
                     </Container>
             </div> }
-            { InRoom && <Room room={JSON.stringify(room)} userId={userId}/>}
+            { InRoom && <Room roomId={roomId} userId={userId}/>}
         </>
     )
 }
